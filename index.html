@@ -1,0 +1,1096 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>저축 퀘스트 | 나의 작은 정원</title>
+<style>
+:root {
+  --forest:#244d38;
+  --green:#4d8b57;
+  --lime:#d8ec9c;
+  --cream:#f8f7ee;
+  --ink:#26382c;
+  --muted:#738074;
+  --line:#e2e7d9;
+  --white:#fff;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:"Pretendard","Apple SD Gothic Neo",
+    "Malgun Gothic",sans-serif;
+}
+button,input {font:inherit}
+button {cursor:pointer}
+button:disabled {opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible {
+  outline:3px solid #8dbf73;
+  outline-offset:3px;
+}
+header {
+  background:var(--forest);
+  color:white;
+  padding:17px 5%;
+}
+.header-inner {
+  max-width:1120px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.logo {font-weight:900;font-size:21px}
+.header-sub {font-size:12px;opacity:.75;margin-top:4px}
+.reset {
+  border:1px solid #71917b;
+  background:transparent;
+  color:white;
+  border-radius:12px;
+  padding:10px 13px;
+}
+main {max-width:1120px;margin:auto;padding:28px 18px 60px}
+.intro {margin-bottom:22px}
+.eyebrow {
+  color:var(--green);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.5px;
+}
+h1 {font-size:clamp(25px,4vw,38px);margin:9px 0}
+.intro p {color:var(--muted);line-height:1.6}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+.card {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:21px;
+  padding:21px;
+  box-shadow:0 5px 22px #25472b08;
+}
+.stat-label {font-size:13px;color:var(--muted)}
+.stat-value {
+  font-size:clamp(20px,3vw,29px);
+  font-weight:900;
+  margin-top:10px;
+  word-break:keep-all;
+}
+.layout {
+  display:grid;
+  grid-template-columns:1.15fr 1fr;
+  gap:18px;
+  align-items:start;
+}
+.stack {display:grid;gap:18px}
+.section-title {
+  font-size:20px;
+  font-weight:900;
+  margin:0 0 8px;
+}
+.sub {font-size:13px;color:var(--muted);line-height:1.6}
+.garden {
+  height:310px;
+  position:relative;
+  overflow:hidden;
+  border-radius:18px;
+  margin-top:16px;
+  background:linear-gradient(#d9f0e4 0%,#eaf6d9 65%,#a9d38b 65%);
+}
+.sun {
+  position:absolute;
+  width:65px;height:65px;
+  border-radius:50%;
+  background:#ffe39a;
+  top:28px;right:37px;
+  box-shadow:0 0 35px #ffe39a99;
+}
+.cloud {position:absolute;top:47px;left:35px;font-size:43px}
+.ground {
+  position:absolute;bottom:0;
+  width:100%;height:43px;
+  background:#8fb970;
+}
+.garden-item {
+  position:absolute;
+  bottom:37px;
+  font-size:clamp(28px,5vw,51px);
+  animation:pop .5s both;
+  filter:drop-shadow(0 5px 2px #385a3025);
+}
+@keyframes pop {
+  from {transform:scale(0);opacity:0}
+  to {transform:scale(1);opacity:1}
+}
+.character {
+  position:absolute;
+  left:50%;bottom:33px;
+  transform:translateX(-50%);
+  text-align:center;
+  z-index:3;
+}
+.character-face {
+  font-size:92px;
+  animation:bob 2.4s ease-in-out infinite;
+}
+@keyframes bob {
+  0%,100% {transform:translateY(0)}
+  50% {transform:translateY(-9px)}
+}
+.character-name {
+  display:inline-block;
+  background:#ffffffde;
+  border-radius:20px;
+  padding:6px 13px;
+  font-size:12px;
+  font-weight:800;
+}
+.level-tag {
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:30px;
+  background:#e5f1d5;
+  color:var(--forest);
+  font-size:12px;
+  font-weight:900;
+}
+.progress-track {
+  height:12px;
+  background:#e9eee3;
+  border-radius:20px;
+  overflow:hidden;
+  margin:12px 0 8px;
+}
+.progress-fill {
+  width:0%;
+  height:100%;
+  background:var(--green);
+  border-radius:20px;
+  transition:width .5s;
+}
+.progress-meta {
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:var(--muted);
+  gap:8px;
+}
+.field-label {
+  display:block;
+  font-weight:800;
+  font-size:14px;
+  margin:18px 0 8px;
+}
+input {
+  width:100%;
+  padding:14px;
+  border:1px solid #d5dfd1;
+  border-radius:12px;
+  background:#fff;
+  color:var(--ink);
+  min-width:0;
+}
+input:focus {border-color:var(--green)}
+.quick-buttons {display:flex;gap:8px;margin:10px 0}
+.quick-buttons button {
+  flex:1;
+  background:#eff5e8;
+  color:var(--forest);
+  border:0;
+  padding:10px 5px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:800;
+}
+.btn {
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:13px;
+  font-weight:900;
+  margin-top:13px;
+}
+.primary {background:var(--forest);color:white}
+.secondary {background:#e8f0e2;color:var(--forest)}
+.danger {background:#fff0ec;color:#a64d38}
+.mission {
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-top:10px;
+  background:#fff;
+}
+.mission.locked {opacity:.58;background:#f6f7f3}
+.mission-top {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+.mission-name {font-weight:900;font-size:14px}
+.mission-desc {font-size:12px;color:var(--muted);margin-top:7px}
+.mission-status {
+  font-size:11px;
+  background:#e8f2dd;
+  color:var(--forest);
+  padding:5px 8px;
+  border-radius:20px;
+  white-space:nowrap;
+}
+.message {
+  min-height:20px;
+  margin-top:10px;
+  font-size:13px;
+  color:var(--forest);
+  font-weight:700;
+}
+.history {
+  list-style:none;
+  padding:0;
+  margin:12px 0 0;
+}
+.history li {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:1px solid var(--line);
+  padding:11px 0;
+  font-size:13px;
+}
+.history small {color:var(--muted)}
+.history button {
+  border:0;
+  background:#f2f4ee;
+  padding:5px 9px;
+  border-radius:8px;
+}
+.notice {
+  margin-top:17px;
+  padding:13px;
+  background:#f0f5e8;
+  border-radius:12px;
+  font-size:12px;
+  color:#55715b;
+  line-height:1.6;
+}
+.toast {
+  position:fixed;
+  top:20px;left:50%;
+  transform:translate(-50%,-20px);
+  background:#244d38;
+  color:white;
+  border-radius:15px;
+  padding:15px 23px;
+  z-index:20;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  max-width:90%;
+  text-align:center;
+  box-shadow:0 10px 35px #0003;
+}
+.toast.show {
+  opacity:1;
+  transform:translate(-50%,0);
+}
+.celebrate {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:15;
+  overflow:hidden;
+}
+.confetti {
+  position:absolute;
+  top:-30px;
+  font-size:24px;
+  animation:fall 2s linear forwards;
+}
+@keyframes fall {
+  to {transform:translateY(110vh) rotate(400deg);opacity:0}
+}
+@media(max-width:760px) {
+  .layout {grid-template-columns:1fr}
+  .stats {gap:8px}
+  .card {padding:16px}
+  .stat-label {font-size:11px}
+  .garden {height:285px}
+  main {padding:20px 12px 45px}
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="logo">🌱 저축 퀘스트</div>
+      <div class="header-sub">작은 저축이 만드는 커다란 정원</div>
+    </div>
+    <button class="reset" id="resetBtn">↺ 초기화</button>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="eyebrow">MY SAVING GARDEN</div>
+    <h1>오늘의 1,000원이<br>내일의 나무가 돼요.</h1>
+    <p>저축 미션을 깨고, 캐릭터를 키우고,<br>
+       나만의 정원을 완성해 보세요.</p>
+  </section>
+
+  <section class="stats" aria-label="저축 현황">
+    <div class="card">
+      <div class="stat-label">현재 저축액</div>
+      <div class="stat-value" id="balance">0원</div>
+    </div>
+    <div class="card">
+      <div class="stat-label">캐릭터 레벨</div>
+      <div class="stat-value" id="level">Lv.1</div>
+    </div>
+    <div class="card">
+      <div class="stat-label">완료한 미션</div>
+      <div class="stat-value" id="completed">0개</div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="card">
+        <h2 class="section-title">🌳 나의 성장 정원</h2>
+        <div class="sub">저축을 할수록 정원이 살아나요!</div>
+        <div class="garden" aria-label="저축으로 성장하는 정원">
+          <div class="sun"></div>
+          <div class="cloud">☁️</div>
+          <div id="gardenItems"></div>
+          <div class="character">
+            <div class="character-face" id="avatar">🌱</div>
+            <div class="character-name" id="avatarName">
+              아기 새싹
+            </div>
+          </div>
+          <div class="ground"></div>
+        </div>
+        <div style="margin-top:17px">
+          <span class="level-tag" id="levelTag">Lv.1 새싹</span>
+          <div class="progress-track">
+            <div class="progress-fill" id="xpBar"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="xpText">0 / 100 XP</span>
+            <span>다음 성장까지</span>
+          </div>
+        </div>
+        <div class="notice" id="gardenHint">
+          🌼 첫 저축을 하면 꽃이 피어나요.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">🎯 나의 저축 목표</h2>
+        <div class="sub">목표 금액을 직접 정해 보세요.</div>
+        <label class="field-label" for="goalInput">
+          목표 금액 (원)
+        </label>
+        <input type="number" id="goalInput"
+          min="1000" max="1000000000" step="1000"
+          value="30000">
+        <button class="btn secondary" id="goalBtn">
+          목표 설정하기
+        </button>
+        <div class="progress-track">
+          <div class="progress-fill" id="goalBar"></div>
+        </div>
+        <div class="progress-meta">
+          <span id="goalText">0 / 30,000원</span>
+          <strong id="goalPercent">0%</strong>
+        </div>
+        <div class="message" id="goalMessage" role="status"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">📜 저축 기록</h2>
+        <div class="sub">최근 저축 내역을 확인할 수 있어요.</div>
+        <ul class="history" id="history"></ul>
+        <div class="notice">
+          이 서비스는 실제 은행 계좌와 연결되지 않는
+          저축 연습용 웹사이트입니다.
+        </div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="card">
+        <h2 class="section-title">💰 오늘의 저축</h2>
+        <div class="sub">하루 1,000원부터 시작해 볼까요?</div>
+        <label class="field-label" for="amountInput">
+          저축할 금액 (원)
+        </label>
+        <input type="number" id="amountInput"
+          min="1" max="1000000000"
+          placeholder="예: 1000">
+        <div class="quick-buttons">
+          <button data-add="1000">+1,000원</button>
+          <button data-add="3000">+3,000원</button>
+          <button data-add="5000">+5,000원</button>
+        </div>
+        <button class="btn primary" id="saveBtn">
+          🌱 저축하고 정원 키우기
+        </button>
+        <div class="message" id="saveMessage" role="status"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">⚔️ 저축 퀘스트</h2>
+        <div class="sub">
+          미션을 완료하면 경험치와 보상을 얻어요.
+        </div>
+        <div id="missions"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">🏆 나의 업적</h2>
+        <div class="sub">저축으로 획득한 특별한 보상</div>
+        <div id="achievements"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">💸 저축액 사용하기</h2>
+        <div class="sub">
+          기록된 저축액을 사용하면 잔액이 줄어들어요.
+        </div>
+        <label class="field-label" for="spendInput">
+          사용할 금액 (원)
+        </label>
+        <input type="number" id="spendInput"
+          min="1" max="1000000000"
+          placeholder="예: 2000">
+        <button class="btn danger" id="spendBtn">
+          저축액 사용하기
+        </button>
+        <div class="message" id="spendMessage" role="status"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status"
+  aria-live="polite"></div>
+<div class="celebrate" id="celebrate"
+  aria-hidden="true"></div>
+
+<script>
+"use strict";
+
+/*
+디자인 의도 1:
+사용자가 가장 먼저 정원을 보게 하여
+'돈을 모은다'는 추상적인 행동을
+'생명을 키운다'는 구체적인 경험으로 바꾼다.
+
+디자인 의도 2:
+저축 버튼을 누르면 즉시 숫자, 진행률,
+캐릭터, 미션 상태가 갱신되도록 한다.
+이는 시스템 상태 가시성 원칙을 반영한다.
+
+디자인 의도 3:
+초기화 확인과 저축 기록 취소를 제공해
+실수로 입력한 내용을 복구할 수 있게 한다.
+
+디자인 의도 4:
+저축 기록과 미션 진행은 서로 구분한다.
+오늘의 미션은 오늘 저축한 금액만 인정하고,
+과거에 달성한 업적은 소비해도 유지한다.
+*/
+
+// 모든 금액은 정수 원 단위로 처리한다.
+const KEY = "saving-quest-v1";
+const MAX_AMOUNT = 1000000000;
+const DAY_MS = 86400000;
+
+const missionDefs = [
+  {
+    id:"first", name:"첫 번째 씨앗",
+    desc:"누적 1,000원 저축하기",
+    target:1000, type:"total",
+    reward:"🌼 첫 번째 꽃", xp:40
+  },
+  {
+    id:"daily", name:"오늘의 1,000원",
+    desc:"오늘 하루 1,000원 저축하기",
+    target:1000, type:"daily",
+    reward:"🌷 오늘의 꽃", xp:50
+  },
+  {
+    id:"three", name:"꽃밭 만들기",
+    desc:"누적 3,000원 저축하기",
+    target:3000, type:"total",
+    reward:"🌻 해바라기", xp:70
+  },
+  {
+    id:"ten", name:"작은 나무의 탄생",
+    desc:"누적 10,000원 저축하기",
+    target:10000, type:"total",
+    reward:"🌳 나무", xp:120
+  },
+  {
+    id:"thirty", name:"정원의 수호자",
+    desc:"누적 30,000원 저축하기",
+    target:30000, type:"total",
+    reward:"🏡 작은 집", xp:200
+  },
+  {
+    id:"hundred", name:"전설의 정원사",
+    desc:"누적 100,000원 저축하기",
+    target:100000, type:"total",
+    reward:"🏰 비밀의 성", xp:350
+  }
+];
+
+function initialState() {
+  return {
+    balance:0,
+    totalSaved:0,
+    goal:30000,
+    transactions:[],
+    completed:[],
+    dailyClaims:[],
+    goalRewards:[],
+    xp:0
+  };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return initialState();
+    const data = JSON.parse(raw);
+    if (!data || typeof data !== "object")
+      return initialState();
+    const base = initialState();
+    const merged = {...base,...data};
+    if (!Array.isArray(merged.transactions) ||
+        !Array.isArray(merged.completed) ||
+        !Array.isArray(merged.dailyClaims) ||
+        !Array.isArray(merged.goalRewards)) {
+      return base;
+    }
+    if (!Number.isSafeInteger(merged.balance) ||
+        merged.balance < 0 ||
+        !Number.isSafeInteger(merged.totalSaved) ||
+        merged.totalSaved < 0 ||
+        !Number.isSafeInteger(merged.goal) ||
+        merged.goal < 1000 ||
+        !Number.isSafeInteger(merged.xp) ||
+        merged.xp < 0) {
+      return base;
+    }
+    return merged;
+  } catch {
+    return initialState();
+  }
+}
+
+let state = loadState();
+let toastTimer;
+let celebrationTimer;
+
+const $ = id => document.getElementById(id);
+const won = n => Math.floor(n).toLocaleString("ko-KR")+"원";
+
+function localDate(timestamp=Date.now()) {
+  const d = new Date(timestamp);
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function persist() {
+  try {
+    localStorage.setItem(KEY,JSON.stringify(state));
+  } catch {
+    showToast("저장 공간이 부족해 기록을 보관하지 못했어요.");
+  }
+}
+
+function showToast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{
+    el.classList.remove("show");
+  },3000);
+}
+
+function celebrate() {
+  const area = $("celebrate");
+  area.replaceChildren();
+  const icons = ["🌸","✨","🌼","⭐","🍀"];
+  for (let i=0;i<24;i++) {
+    const piece = document.createElement("span");
+    piece.className="confetti";
+    piece.textContent=icons[i%icons.length];
+    piece.style.left=(Math.random()*100)+"%";
+    piece.style.animationDelay=(Math.random()*.6)+"s";
+    area.appendChild(piece);
+  }
+  clearTimeout(celebrationTimer);
+  celebrationTimer=setTimeout(()=>{
+    area.replaceChildren();
+  },2800);
+}
+
+function getLevel() {
+  return Math.floor(state.xp/100)+1;
+}
+
+function getCharacter() {
+  const level=getLevel();
+  if (level>=8) return ["🌳","전설의 정원사"];
+  if (level>=5) return ["🌲","숲의 수호자"];
+  if (level>=3) return ["🌿","성장한 새싹"];
+  if (level>=2) return ["🪴","어린 화분"];
+  return ["🌱","아기 새싹"];
+}
+
+function todaySaved() {
+  const today=localDate();
+  return state.transactions
+    .filter(t=>t.type==="save" &&
+      localDate(t.time)===today)
+    .reduce((sum,t)=>sum+t.amount,0);
+}
+
+function dailyCompletedToday() {
+  return state.dailyClaims.includes(localDate());
+}
+
+function missionProgress(m) {
+  return m.type==="daily" ? todaySaved() :
+    state.totalSaved;
+}
+
+function isCompleted(m) {
+  if (m.type==="daily") return dailyCompletedToday();
+  return state.completed.includes(m.id);
+}
+
+function rewardMissions() {
+  let gained=[];
+  for (const m of missionDefs) {
+    if (isCompleted(m)) continue;
+    if (missionProgress(m)<m.target) continue;
+
+    if (m.type==="daily") {
+      state.dailyClaims.push(localDate());
+    } else {
+      state.completed.push(m.id);
+    }
+    state.xp+=m.xp;
+    gained.push(m);
+  }
+  return gained;
+}
+
+function checkGoalReward() {
+  if (state.balance<state.goal) return false;
+  if (state.goalRewards.includes(state.goal))
+    return false;
+  state.goalRewards.push(state.goal);
+  state.xp+=100;
+  return true;
+}
+
+function validAmount(value,min=1) {
+  const n=Number(value);
+  if (String(value).trim()==="" ||
+      !Number.isSafeInteger(n) ||
+      n<min || n>MAX_AMOUNT) {
+    return null;
+  }
+  return n;
+}
+
+function addAmount(n) {
+  const input=$("amountInput");
+  const current=validAmount(input.value) || 0;
+  input.value=Math.min(MAX_AMOUNT,current+n);
+  input.focus();
+}
+
+document.querySelectorAll("[data-add]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    addAmount(Number(btn.dataset.add));
+  });
+});
+
+function saveMoney() {
+  const amount=validAmount($("amountInput").value);
+  if (amount===null) {
+    $("saveMessage").textContent=
+      "1원 이상 10억 원 이하의 정수를 입력해 주세요.";
+    return;
+  }
+  if (state.balance+amount>MAX_AMOUNT ||
+      state.totalSaved+amount>MAX_AMOUNT) {
+    $("saveMessage").textContent=
+      "저축 기록은 최대 10억 원까지 지원해요.";
+    return;
+  }
+
+  const oldLevel=getLevel();
+  state.balance+=amount;
+  state.totalSaved+=amount;
+  state.transactions.unshift({
+    id:Date.now()+"-"+Math.random(),
+    type:"save",
+    amount,
+    time:Date.now()
+  });
+
+  const rewards=rewardMissions();
+  const goalReward=checkGoalReward();
+  const leveled=getLevel()>oldLevel;
+
+  persist();
+  render();
+  $("amountInput").value="";
+  $("saveMessage").textContent=
+    won(amount)+" 저축 완료! 정원이 성장했어요.";
+
+  if (rewards.length || goalReward || leveled) {
+    celebrate();
+    let msg="🎉 ";
+    if (leveled) msg+="레벨 업! ";
+    if (rewards.length) {
+      msg+=rewards.map(m=>m.reward).join(", ")+" 획득!";
+    } else if (goalReward) {
+      msg+="목표 달성! 보너스 100 XP 획득!";
+    }
+    showToast(msg);
+  } else {
+    showToast("🌱 "+won(amount)+" 저축 성공!");
+  }
+}
+
+function spendMoney() {
+  const amount=validAmount($("spendInput").value);
+  if (amount===null) {
+    $("spendMessage").textContent=
+      "올바른 사용 금액을 입력해 주세요.";
+    return;
+  }
+  if (amount>state.balance) {
+    $("spendMessage").textContent=
+      "저축액보다 많은 돈은 사용할 수 없어요.";
+    return;
+  }
+  state.balance-=amount;
+  state.transactions.unshift({
+    id:Date.now()+"-"+Math.random(),
+    type:"spend",
+    amount,
+    time:Date.now()
+  });
+  persist();
+  render();
+  $("spendInput").value="";
+  $("spendMessage").textContent=
+    won(amount)+" 사용했어요.";
+  showToast("사용 기록이 반영되었어요.");
+}
+
+function setGoal() {
+  const goal=validAmount($("goalInput").value,1000);
+  if (goal===null) {
+    $("goalMessage").textContent=
+      "목표는 1,000원 이상 10억 원 이하로 설정해 주세요.";
+    return;
+  }
+  state.goal=goal;
+  const rewarded=checkGoalReward();
+  persist();
+  render();
+  $("goalMessage").textContent=
+    "목표 금액이 "+won(goal)+"으로 설정되었어요.";
+  if (rewarded) {
+    celebrate();
+    showToast("🏆 목표 달성! 100 XP 획득!");
+  } else {
+    showToast("🎯 새로운 목표를 설정했어요.");
+  }
+}
+
+function undoTransaction(id) {
+  const index=state.transactions.findIndex(t=>t.id===id);
+  if (index<0) return;
+  const t=state.transactions[index];
+
+  if (t.type==="save") {
+    if (state.balance<t.amount) {
+      showToast("해당 저축액을 이미 사용했으므로 취소할 수 없어요.");
+      return;
+    }
+    state.balance-=t.amount;
+    state.totalSaved-=t.amount;
+  } else {
+    if (state.balance+t.amount>MAX_AMOUNT) {
+      showToast("취소하면 잔액 한도를 초과해요.");
+      return;
+    }
+    state.balance+=t.amount;
+  }
+  state.transactions.splice(index,1);
+
+  // 이미 획득한 경험치와 업적은 유지한다.
+  // 저축 취소는 잔액과 누적 저축 기록만 되돌린다.
+  persist();
+  render();
+  showToast("↩️ 거래 기록을 취소했어요.");
+}
+
+function resetAll() {
+  if (!confirm(
+    "저축 기록, 캐릭터, 정원, 업적을 모두 초기화할까요?\n"+
+    "이 작업은 되돌릴 수 없어요."
+  )) return;
+
+  state=initialState();
+  persist();
+  $("amountInput").value="";
+  $("spendInput").value="";
+  $("saveMessage").textContent="";
+  $("spendMessage").textContent="";
+  $("goalMessage").textContent="";
+  render();
+  showToast("처음부터 다시 시작해요! 🌱");
+}
+
+function renderStats() {
+  $("balance").textContent=won(state.balance);
+  $("level").textContent="Lv."+getLevel();
+  const completedCount=state.completed.length+
+    (dailyCompletedToday()?1:0);
+  $("completed").textContent=completedCount+"개";
+
+  const [avatar,name]=getCharacter();
+  $("avatar").textContent=avatar;
+  $("avatarName").textContent=name;
+  $("levelTag").textContent="Lv."+getLevel()+" "+name;
+
+  const xpInLevel=state.xp%100;
+  $("xpBar").style.width=xpInLevel+"%";
+  $("xpText").textContent=xpInLevel+" / 100 XP";
+}
+
+function renderGarden() {
+  const area=$("gardenItems");
+  area.replaceChildren();
+
+  // 누적 저축 업적과 현재 잔액을 함께 반영한다.
+  // 소비하면 일부 장식이 사라지지만
+  // 이미 얻은 캐릭터 경험치는 유지된다.
+  const items=[
+    {cost:1000,emoji:"🌼",left:12,bottom:40},
+    {cost:2000,emoji:"🌷",left:75,bottom:43},
+    {cost:3000,emoji:"🌻",left:22,bottom:45},
+    {cost:5000,emoji:"🌸",left:65,bottom:47},
+    {cost:10000,emoji:"🌳",left:5,bottom:55},
+    {cost:15000,emoji:"🌲",left:81,bottom:60},
+    {cost:20000,emoji:"🍄",left:35,bottom:39},
+    {cost:30000,emoji:"🏡",left:68,bottom:65},
+    {cost:50000,emoji:"🌴",left:1,bottom:95},
+    {cost:100000,emoji:"🏰",left:75,bottom:98}
+  ];
+
+  items.forEach(item=>{
+    if (state.balance<item.cost) return;
+    const el=document.createElement("span");
+    el.className="garden-item";
+    el.textContent=item.emoji;
+    el.style.left=item.left+"%";
+    el.style.bottom=item.bottom+"px";
+    area.appendChild(el);
+  });
+
+  $("gardenHint").textContent=
+    state.balance===0 ?
+    "🌼 첫 저축을 하면 꽃이 피어나요." :
+    state.balance<10000 ?
+    "🌷 잘하고 있어요! 10,000원을 모으면 나무가 생겨요." :
+    state.balance<30000 ?
+    "🌳 나무가 자랐어요! 30,000원에 작은 집이 열려요." :
+    "🏡 멋진 정원이에요! 다음 목표도 도전해 보세요.";
+}
+
+function renderGoal() {
+  $("goalInput").value=state.goal;
+  const percent=Math.min(100,
+    Math.floor(state.balance/state.goal*100));
+  $("goalBar").style.width=percent+"%";
+  $("goalText").textContent=
+    won(state.balance)+" / "+won(state.goal);
+  $("goalPercent").textContent=percent+"%";
+}
+
+function renderMissions() {
+  const area=$("missions");
+  area.replaceChildren();
+
+  missionDefs.forEach((m,i)=>{
+    const done=isCompleted(m);
+    const previous=missionDefs[i-1];
+    const locked=i>0 && previous &&
+      !isCompleted(previous);
+    const progress=missionProgress(m);
+    const percent=Math.min(100,
+      Math.floor(progress/m.target*100));
+
+    const box=document.createElement("div");
+    box.className="mission"+(locked?" locked":"");
+
+    const top=document.createElement("div");
+    top.className="mission-top";
+
+    const name=document.createElement("span");
+    name.className="mission-name";
+    name.textContent=(locked?"🔒 ":"")+
+      (i+1)+". "+m.name;
+
+    const status=document.createElement("span");
+    status.className="mission-status";
+    status.textContent=done?"완료":
+      locked?"잠김":"진행 중";
+
+    top.append(name,status);
+
+    const desc=document.createElement("div");
+    desc.className="mission-desc";
+    desc.textContent=m.desc;
+
+    const track=document.createElement("div");
+    track.className="progress-track";
+    const fill=document.createElement("div");
+    fill.className="progress-fill";
+    fill.style.width=percent+"%";
+    track.appendChild(fill);
+
+    const meta=document.createElement("div");
+    meta.className="progress-meta";
+    const left=document.createElement("span");
+    left.textContent=won(Math.min(progress,m.target))+
+      " / "+won(m.target);
+    const right=document.createElement("span");
+    right.textContent=m.reward+" · "+m.xp+" XP";
+    meta.append(left,right);
+
+    box.append(top,desc,track,meta);
+    area.appendChild(box);
+  });
+}
+
+function renderAchievements() {
+  const area=$("achievements");
+  area.replaceChildren();
+
+  const list=[
+    ["🌼","첫 저축",state.totalSaved>=1000],
+    ["🌳","나무 키우기",state.totalSaved>=10000],
+    ["🏡","정원 만들기",state.totalSaved>=30000],
+    ["🏰","전설의 정원",state.totalSaved>=100000],
+    ["⭐","레벨 5 달성",getLevel()>=5]
+  ];
+
+  list.forEach(([icon,name,done])=>{
+    const row=document.createElement("div");
+    row.className="mission"+(!done?" locked":"");
+    row.textContent=(done?icon:"🔒")+
+      " "+name+(done?" · 획득!":" · 미달성");
+    area.appendChild(row);
+  });
+}
+
+function renderHistory() {
+  const area=$("history");
+  area.replaceChildren();
+  if (!state.transactions.length) {
+    const empty=document.createElement("li");
+    empty.textContent="아직 기록이 없어요. 첫 저축을 시작해요!";
+    area.appendChild(empty);
+    return;
+  }
+
+  state.transactions.slice(0,10).forEach(t=>{
+    const li=document.createElement("li");
+    const info=document.createElement("div");
+    const title=document.createElement("strong");
+    title.textContent=
+      (t.type==="save"?"🌱 저축 +":"💸 사용 -")+
+      won(t.amount);
+    const date=document.createElement("small");
+    date.textContent=" · "+
+      new Date(t.time).toLocaleString("ko-KR");
+    info.append(title,date);
+
+    const undo=document.createElement("button");
+    undo.textContent="취소";
+    undo.setAttribute("aria-label",
+      won(t.amount)+" 거래 취소");
+    undo.addEventListener("click",()=>{
+      undoTransaction(t.id);
+    });
+    li.append(info,undo);
+    area.appendChild(li);
+  });
+}
+
+function render() {
+  renderStats();
+  renderGarden();
+  renderGoal();
+  renderMissions();
+  renderAchievements();
+  renderHistory();
+}
+
+$("saveBtn").addEventListener("click",saveMoney);
+$("spendBtn").addEventListener("click",spendMoney);
+$("goalBtn").addEventListener("click",setGoal);
+$("resetBtn").addEventListener("click",resetAll);
+
+$("amountInput").addEventListener("keydown",e=>{
+  if (e.key==="Enter") saveMoney();
+});
+$("spendInput").addEventListener("keydown",e=>{
+  if (e.key==="Enter") spendMoney();
+});
+$("goalInput").addEventListener("keydown",e=>{
+  if (e.key==="Enter") setGoal();
+});
+
+// 날짜가 바뀌면 오늘의 퀘스트 진행률을 갱신한다.
+document.addEventListener("visibilitychange",()=>{
+  if (!document.hidden) render();
+});
+window.addEventListener("focus",render);
+
+// 저장된 데이터를 불러와 화면을 구성한다.
+render();
+</script>
+</body>
+</html>
